@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DR KAMRANAPI Scraper Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f 0%, #112240 50%, #0a192f 100%);
+            color: #e6f1ff;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+        
+        header {
+            background: rgba(10, 25, 47, 0.8);
+            padding: 25px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #64ffda, #00a3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(100, 255, 218, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            color: #ccd6f6;
+        }
+        
+        .creator {
+            font-size: 1rem;
+            color: #64ffda;
+            margin-top: 5px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 25px 0;
+        }
+        
+        .category-btn {
+            background: rgba(23, 42, 69, 0.7);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            padding: 12px 24px;
+            border-radius: 30px;
+            color: #ccd6f6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            font-weight: 500;
+        }
+        
+        .category-btn:hover {
+            background: rgba(100, 255, 218, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.2);
+        }
+        
+        .category-btn.active {
+            background: rgba(100, 255, 218, 0.15);
+            color: #64ffda;
+            border-color: #64ffda;
+            font-weight: bold;
+        }
+        
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .api-card {
+            background: rgba(23, 42, 69, 0.5);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .api-card:hover {
+            transform: translateY(-8px);
+            background: rgba(23, 42, 69, 0.7);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(100, 255, 218, 0.3);
+        }
+        
+        .api-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .api-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #64ffda;
+        }
+        
+        .api-category {
+            background: rgba(100, 255, 218, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #64ffda;
+        }
+        
+        .api-description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #a8b2d1;
+        }
+        
+        .api-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: rgba(10, 25, 47, 0.6);
+            color: #e6f1ff;
+            font-size: 1rem;
+        }
+        
+        .api-input:focus {
+            outline: none;
+            border-color: #64ffda;
+            box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.2);
+        }
+        
+        .api-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #64ffda, #00a3ff);
+            color: #0a192f;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .api-submit:hover {
+            background: linear-gradient(90deg, #00a3ff, #64ffda);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.4);
+        }
+        
+        .result-container {
+            margin-top: 25px;
+            background: rgba(10, 25, 47, 0.6);
+            border-radius: 10px;
+            padding: 18px;
+            position: relative;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .result-header span {
+            font-weight: bold;
+            color: #64ffda;
+        }
+        
+        .copy-btn {
+            background: rgba(100, 255, 218, 0.15);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: #64ffda;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(100, 255, 218, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .result-content {
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(10, 25, 47, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #a8b2d1;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 25px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(100, 255, 218, 0.2);
+            border-radius: 50%;
+            border-top: 4px solid #64ffda;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 25px;
+            background: rgba(10, 25, 47, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(100, 255, 218, 0.2);
+        }
+        
+        .instructions {
+            background: rgba(23, 42, 69, 0.6);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .instructions h2 {
+            color: #64ffda;
+            margin-bottom: 15px;
+        }
+        
+        .instructions p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .url-info {
+            background: rgba(23, 42, 69, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .url-info h3 {
+            color: #64ffda;
+            margin-bottom: 10px;
+        }
+        
+        .url-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .url-example {
+            background: rgba(10, 25, 47, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            border-left: 3px solid #64ffda;
+        }
+        
+        .api-management {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .refresh-btn {
+            background: rgba(100, 255, 218, 0.15);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            padding: 10px 20px;
+            border-radius: 6px;
+            color: #64ffda;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: rgba(100, 255, 218, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .api-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .url-examples {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .category-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            
+            .api-management {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dynamic API Scraper Hub</h1>
+        <p class="subtitle">Automatically loads API scrapers from the /api folder</p>
+        <p class="creator">Created by DR KAMRAN</p>
+    </header>
+    
+    <div class="container">
+        <div class="instructions">
+            <h2>How It Works</h2>
+            <p>This website dynamically loads API scraping scripts from the <code>/api</code> folder.</p>
+            <p>Just add JavaScript files to the api folder with the proper structure, and they will be automatically loaded.</p>
+        </div>
+        
+        <div class="url-info">
+            <h3>Direct API Access</h3>
+            <p>You can access APIs directly using these routes:</p>
+            <div class="url-examples">
+                <div class="url-example">/api/gpt?query=Hello</div>
+                <div class="url-example">/api/pinterest?search=cats</div>
+                <div class="url-example">/api/youtube?url=https://youtube.com/...</div>
+            </div>
+        </div>
+        
+        <div class="api-management">
+            <div class="category-filter">
+                <button class="category-btn active" data-category="all">All APIs</button>
+                <button class="category-btn" data-category="ai">AI Tools</button>
+                <button class="category-btn" data-category="downloads">Downloads</button>
+                <button class="category-btn" data-category="search">Search</button>
+                <button class="category-btn" data-category="media">Media</button>
+            </div>
+            
+            <button class="refresh-btn" id="refreshBtn">
+                <i class="fas fa-sync-alt"></i> Reload APIs
+            </button>
+        </div>
+        
+        <div class="api-grid" id="apiGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading APIs from /api folder...</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Dynamic API Scraper Hub &copy; 2023 | Created by DR KAMRAN</p>
+    </footer>
+
+    <script>
+        // DOM elements
+        const apiGrid = document.getElementById('apiGrid');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        // Function to load API configurations from the /api folder
+        async function loadAPIConfigs() {
+            try {
+                // First try to get the list of API files from the server
+                const response = await fetch('/api/list');
+                if (!response.ok) {
+                    throw new Error('API list endpoint not available');
+                }
+                
+                const apiFiles = await response.json();
+                const apiConfigs = [];
+                
+                // Load each API configuration
+                for (const file of apiFiles) {
+                    try {
+                        // Try to load the API module
+                        const module = await import(`/api/${file}`);
+                        if (module && module.default) {
+                            apiConfigs.push(module.default);
+                        }
+                    } catch (error) {
+                        console.error(`Error loading API from ${file}:`, error);
+                        
+                        // If dynamic import fails, try to fetch as JSON
+                        try {
+                            const apiResponse = await fetch(`/api/${file.replace('.js', '')}/config`);
+                            if (apiResponse.ok) {
+                                const config = await apiResponse.json();
+                                apiConfigs.push(config);
+                            }
+                        } catch (e) {
+                            console.error(`Also failed to load config for ${file}:`, e);
+                        }
+                    }
+                }
+                
+                return apiConfigs;
+            } catch (error) {
+                console.error("Error loading API configurations:", error);
+                // Fallback to trying to load known APIs directly
+                return loadKnownAPIs();
+            }
+        }
+
+        // Fallback function to load known APIs
+        async function loadKnownAPIs() {
+            try {
+                const apis = [];
+                
+                // Try to load each known API
+                const knownApis = [
+                    { name: 'gpt', path: '/api/gpt/config' },
+                    { name: 'pinterest', path: '/api/pinterest/config' },
+                    { name: 'youtube', path: '/api/youtube/config' }
+                ];
+                
+                for (const api of knownApis) {
+                    try {
+                        const response = await fetch(api.path);
+                        if (response.ok) {
+                            const config = await response.json();
+                            apis.push(config);
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${api.name} config:`, error);
+                    }
+                }
+                
+                return apis;
+            } catch (error) {
+                console.error("Error loading known APIs:", error);
+                return [];
+            }
+        }
+
+        // Render API cards
+        function renderApiCards(apis) {
+            if (apis.length === 0) {
+                apiGrid.innerHTML = `
+                    <div class="loading">
+                        <p>No APIs found in /api folder.</p>
+                        <p>Please add API files to the /api directory.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            apiGrid.innerHTML = '';
+            
+            apis.forEach(api => {
+                const apiCard = document.createElement('div');
+                apiCard.className = 'api-card';
+                apiCard.dataset.category = api.category;
+                apiCard.id = api.name.toLowerCase().replace(/\s+/g, '-');
+                
+                let paramsHTML = '';
+                if (api.params) {
+                    api.params.forEach(param => {
+                        if (param.type === 'hidden') {
+                            paramsHTML += `<input type="hidden" name="${param.name}" value="${param.value}">`;
+                        } else {
+                            paramsHTML += `
+                                <input class="api-input" type="${param.type}" name="${param.name}" 
+                                    placeholder="${param.placeholder}" ${param.required ? 'required' : ''}>
+                            `;
+                        }
+                    });
+                }
+                
+                apiCard.innerHTML = `
+                    <div class="api-header">
+                        <div class="api-name">${api.name}</div>
+                        <div class="api-category">${api.category}</div>
+                    </div>
+                    <div class="api-description">${api.description}</div>
+                    <form class="api-form">
+                        ${paramsHTML}
+                        <button type="submit" class="api-submit">Fetch Data</button>
+                    </form>
+                    <div class="result-container" style="display: none;">
+                        <div class="result-header">
+                            <span>Result</span>
+                            <button class="copy-btn"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <div class="result-content"></div>
+                    </div>
+                `;
+                
+                apiGrid.appendChild(apiCard);
+                
+                // Add form submission handler
+                const form = apiCard.querySelector('.api-form');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    fetchApiData(api, this, apiCard);
+                });
+                
+                // Add copy button handler
+                const copyBtn = apiCard.querySelector('.copy-btn');
+                copyBtn.addEventListener('click', function() {
+                    const resultContent = apiCard.querySelector('.result-content').textContent;
+                    navigator.clipboard.writeText(resultContent).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy text: ', err);
+                    });
+                });
+            });
+            
+            // Process URL parameters after rendering
+            processUrlParameters(apis);
+        }
+
+        // Process URL parameters to pre-fill and submit forms
+        function processUrlParameters(apis) {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Check for API parameter
+            if (urlParams.has('api')) {
+                const apiName = urlParams.get('api').toLowerCase();
+                const targetApi = apis.find(api => 
+                    api.name.toLowerCase().includes(apiName) || 
+                    (api.route && api.route.toLowerCase() === apiName)
+                );
+                
+                if (targetApi) {
+                    const apiCard = document.getElementById(targetApi.name.toLowerCase().replace(/\s+/g, '-'));
+                    if (apiCard) {
+                        // Scroll to the API card
+                        apiCard.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Highlight the card
+                        apiCard.style.boxShadow = '0 0 20px rgba(100, 255, 218, 0.5)';
+                        setTimeout(() => {
+                            apiCard.style.boxShadow = '';
+                        }, 2000);
+                        
+                        // Fill the form with all available parameters
+                        const form = apiCard.querySelector('.api-form');
+                        urlParams.forEach((value, key) => {
+                            if (key !== 'api') {
+                                const input = form.querySelector(`[name="${key}"]`);
+                                if (input) {
+                                    input.value = value;
+                                }
+                            }
+                        });
+                        
+                        // Submit the form after a short delay
+                        setTimeout(() => {
+                            form.dispatchEvent(new Event('submit'));
+                        }, 500);
+                    }
+                }
+            }
+        }
+
+        // Fetch data from API
+        async function fetchApiData(apiConfig, form, card) {
+            const resultContainer = card.querySelector('.result-container');
+            const resultContent = card.querySelector('.result-content');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            resultContainer.style.display = 'block';
+            resultContent.innerHTML = '<div class="loading"><div class="spinner"></div><p>Fetching data...</p></div>';
+            
+            try {
+                // Build the API URL
+                const apiUrl = `/api/${apiConfig.name.toLowerCase().replace(/\s+/g, '-')}`;
+                
+                // Build query parameters
+                const formData = new FormData(form);
+                const params = new URLSearchParams();
+                
+                for (let [key, value] of formData.entries()) {
+                    params.append(key, value);
+                }
+                
+                // Make the API request
+                const response = await fetch(`${apiUrl}?${params.toString()}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Format and display the JSON response
+                resultContent.textContent = JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                resultContent.textContent = `Error: ${error.message}`;
+                console.error('API request failed:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+        }
+
+        // Filter APIs by category
+        function filterByCategory(category) {
+            const apiCards = document.querySelectorAll('.api-card');
+            
+            if (category === 'all') {
+                apiCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+            } else {
+                apiCards.forEach(card => {
+                    if (card.dataset.category === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Set up category filter buttons
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                filterByCategory(this.dataset.category);
+            });
+        });
+
+        // Set up refresh button
+        refreshBtn.addEventListener('click', async function() {
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Reloading...';
+            await init();
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Reload APIs';
+        });
+
+        // Initialize the page
+        async function init() {
+            try {
+                const apiConfigs = await loadAPIConfigs();
+                renderApiCards(apiConfigs);
+            } catch (error) {
+                console.error("Failed to initialize application:", error);
+                apiGrid.innerHTML = `
+                    <div class="loading">
+                        <p>Error loading APIs. Please check your server configuration.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
